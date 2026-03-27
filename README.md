@@ -1,99 +1,83 @@
-## Quality Development starter pack
+# BudgetCLI
 
-This repository has been created to give a python template project which includes pytest instructions.
+A command-line application to track personal income and expenses, categorize transactions, and generate text reports.
 
-### 1️⃣ How to start (one-time step)
+Built with Python as a project for the *Quality Development* seminar at UNICT.
 
-Fork this repository and clone your fork into your machine using:
+---
+
+## Features
+
+- Add income and expense transactions with category
+- List all recorded transactions
+- Generate a summary report (totals and breakdown by category)
+- Delete a transaction by index
+- Data persisted locally in a JSON file
+
+## Installation
+
+**Requirements:** Python 3.10+
 
 ```bash
-git clone git@github.com:USERNAME/qd-starter-pack.git
-```
-
-enter to your project directory using:
-
-```bash
-cd qd-starter-pack
-```
-
-Setup virtualenv:
-
-```bash
-python3 -m pip install venv
+git clone https://github.com/GiuseppePitruzzella/budget-cli.git
+cd budget-cli
 python3 -m venv venv
-source ./venv/bin/activate
-```
-
-After running these commands you'll see a `(venv)` in your terminal, if so, you are running the python version of the local environment.
-
-Then, install the tests requirements in your local virtual environment
-
-```bash
+source venv/bin/activate
+pip install -r requirements.txt
 pip install -r requirements_dev.txt
 ```
 
-⚠️ Note: You need to run `source ./venv/bin/activate` every time you open a new terminal to activate the local virtual environment.
-
----
-
-### 2️⃣ How to make a branch
-
-To create a new `branch` from the main repository and work on a specific exercise (ex. `ex1.py`) you can use the following commands:
+## Usage
 
 ```bash
-git checkout main
+# Add an expense (default type: expense, default category: other)
+python3 -m src.budget.cli add 50.0 "Grocery shopping" --category food
 
-git checkout -b new-branch-name
+# Add an income
+python3 -m src.budget.cli add 1500.0 "Monthly salary" --type income --category salary
+
+# List all transactions
+python3 -m src.budget.cli list
+
+# Show summary report
+python3 -m src.budget.cli report
+
+# Delete a transaction by index
+python3 -m src.budget.cli delete 0
 ```
 
----
+Available categories: `food`, `transport`, `entertainment`, `health`, `utilities`, `salary`, `other`
 
-### 3️⃣ How to make a commit
-
-From this step you can edit your `ex1.py` and make some commits using:
+By default, transactions are saved to `budget.json` in the current directory. Override with:
 
 ```bash
-git add src/ex1.py
-
-git commit -m 'feat: description'
+export BUDGET_DATA_FILE=~/.budget/my_budget.json
 ```
 
-Use the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) when you write a commit description.
-
----
-
-### 4️⃣ How to make a PR
-
-Push the commits into GitHub using:
+## Running Tests
 
 ```bash
-git push -u origin new-branch-name
+pytest --cov src tests/
 ```
 
-Afterward, it is possible to create a Pull Request by going to your fork `https://github.com/USERNAME/qd-starter-pack.git` clicking on "create Pull Request" or going to the right section "Pull Request" -> "New Pull Request".
+## Project Structure
 
-If you want to work on another `ex1.py`, go to step 2️⃣.
-
----
-
-Use git wisely.
-
-### Software Testing
-
-How to run properly the tests with the related html report:
-
-```bash
-$ pytest --cov src tests/ --cov-report=html
-
-# or
-
-$ pytest .
+```
+src/budget/
+├── models.py    # Transaction dataclass, Category and TransactionType enums
+├── storage.py   # JSON persistence layer
+├── ledger.py    # In-memory business logic (add, remove, filter, balance)
+├── reports.py   # Pure functions: summary, category breakdown, date filter
+└── cli.py       # Click CLI commands
+tests/
+├── test_models.py
+├── test_storage.py
+├── test_ledger.py
+├── test_reports.py
+└── test_cli.py
 ```
 
-### Clean code
+## Authors
 
-Check [this article](https://testdriven.io/blog/clean-code-python/) to understand how to write "clean code" in python.
-
-### Contributing
-
-Feel free to improve this README with any other detail, if you do it, I'll be grateful.
+- Giuseppe Pitruzzella
+- Chiara Pitru
