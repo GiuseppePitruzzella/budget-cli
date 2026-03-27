@@ -1,5 +1,7 @@
 """Tests for the CLI commands."""
 
+# pylint: disable=redefined-outer-name
+
 from pathlib import Path
 
 import pytest
