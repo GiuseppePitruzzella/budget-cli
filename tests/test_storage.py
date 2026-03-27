@@ -1,5 +1,7 @@
 """Tests for the JSON persistence layer."""
 
+# pylint: disable=redefined-outer-name
+
 from datetime import date
 from pathlib import Path
 
@@ -78,7 +80,7 @@ class TestJSONStorageSave:
         self, storage: JSONStorage, sample_transaction: Transaction
     ) -> None:
         storage.save([sample_transaction])
-        assert Path(storage._path).exists()
+        assert storage.filepath.exists()
 
     def test_save_multiple_transactions(self, storage: JSONStorage) -> None:
         transactions = [

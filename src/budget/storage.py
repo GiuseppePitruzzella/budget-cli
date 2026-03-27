@@ -34,6 +34,11 @@ class JSONStorage:
     def __init__(self, filepath: str) -> None:
         self._path = Path(filepath)
 
+    @property
+    def filepath(self) -> Path:
+        """Return the path to the storage file."""
+        return self._path
+
     def load(self) -> list[Transaction]:
         """Load all transactions from the JSON file.
 

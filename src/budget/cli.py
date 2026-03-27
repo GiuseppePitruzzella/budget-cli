@@ -111,9 +111,9 @@ def delete(index: int, data_file: str) -> None:
         removed = ledger.remove(index)
         storage.save(ledger.all())
         click.echo(f"Deleted: {removed.description} — €{removed.amount:.2f}")
-    except IndexError:
+    except IndexError as exc:
         click.echo(f"Error: no transaction at index {index}.", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from exc
 
 
 if __name__ == "__main__":  # pragma: no cover

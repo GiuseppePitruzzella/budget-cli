@@ -1,5 +1,7 @@
 """Tests for BudgetCLI data models."""
 
+from datetime import date
+
 import pytest
 
 from src.budget.models import Category, Transaction, TransactionType
@@ -30,8 +32,6 @@ class TestTransaction:
         assert t.transaction_type == TransactionType.INCOME
 
     def test_default_date_is_today(self) -> None:
-        from datetime import date
-
         t = Transaction(
             amount=10.0,
             description="Coffee",
@@ -41,8 +41,6 @@ class TestTransaction:
         assert t.date == date.today()
 
     def test_custom_date(self) -> None:
-        from datetime import date
-
         custom = date(2025, 1, 15)
         t = Transaction(
             amount=10.0,
@@ -91,7 +89,7 @@ class TestTransactionType:
         assert TransactionType.EXPENSE.value == "expense"
 
 
-class TestCategory:
+class TestCategory:  # pylint: disable=too-few-public-methods
     """Tests for the Category enum."""
 
     def test_all_categories_exist(self) -> None:

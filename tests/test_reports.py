@@ -90,7 +90,7 @@ class TestBreakdownByCategory:
         assert result[Category.FOOD] == 35.0
 
     def test_empty_list_returns_empty_dict(self) -> None:
-        assert breakdown_by_category([]) == {}
+        assert not breakdown_by_category([])
 
 
 class TestFilterByDateRange:

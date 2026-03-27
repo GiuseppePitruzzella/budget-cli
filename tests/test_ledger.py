@@ -70,7 +70,7 @@ class TestLedgerRemove:
 
 class TestLedgerAll:
     def test_all_returns_empty_list_by_default(self) -> None:
-        assert Ledger().all() == []
+        assert not Ledger().all()
 
     def test_all_returns_copy(self) -> None:
         ledger = Ledger()
