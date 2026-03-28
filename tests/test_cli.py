@@ -194,3 +194,61 @@ class TestListDateFilter:
         )
         assert result.exit_code != 0
         assert "YYYY-MM-DD" in result.output
+
+
+class TestListCategoryFilter:
+    def test_filter_shows_matching_category(
+        self, runner: CliRunner, data_file: str
+    ) -> None:
+        runner.invoke(
+            cli,
+            ["add", "20.0", "Lunch", "--category", "food", "--data-file", data_file],
+        )
+        runner.invoke(
+            cli,
+            ["add", "10.0", "Bus", "--category", "transport", "--data-file", data_file],
+        )
+        result = runner.invoke(
+            cli, ["list", "--category", "food", "--data-file", data_file]
+        )
+        assert "Lunch" in result.output
+        assert "Bus" not in result.output
+
+    def test_filter_returns_empty_when_no_match(
+        self, runner: CliRunner, data_file: str
+    ) -> None:
+        runner.invoke(
+            cli,
+            ["add", "20.0", "Lunch", "--category", "food", "--data-file", data_file],
+        )
+        result = runner.invoke(
+            cli, ["list", "--category", "health", "--data-file", data_file]
+        )
+        assert "No transactions found" in result.output
+
+    def test_invalid_category_fails(self, runner: CliRunner, data_file: str) -> None:
+        result = runner.invoke(
+            cli, ["list", "--category", "invalid", "--data-file", data_file]
+        )
+        assert result.exit_code != 0
+
+    def test_category_and_date_filters_combined(
+        self, runner: CliRunner, data_file: str
+    ) -> None:
+        runner.invoke(
+            cli,
+            ["add", "20.0", "Lunch", "--category", "food", "--data-file", data_file],
+        )
+        result = runner.invoke(
+            cli,
+            [
+                "list",
+                "--category",
+                "food",
+                "--from",
+                "2020-01-01",
+                "--data-file",
+                data_file,
+            ],
+        )
+        assert "Lunch" in result.output

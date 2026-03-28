@@ -95,17 +95,31 @@ def add(
     default=None,
     help="Show transactions up to this date (YYYY-MM-DD).",
 )
+@click.option(
+    "--category",
+    "-c",
+    "filter_category",
+    type=click.Choice(_CATEGORY_CHOICES),
+    default=None,
+    help="Show only transactions of this category.",
+)
 @click.option("--data-file", default=DEFAULT_DATA_FILE, hidden=True)
 def list_transactions(
-    date_from: str | None, date_to: str | None, data_file: str
+    date_from: str | None,
+    date_to: str | None,
+    filter_category: str | None,
+    data_file: str,
 ) -> None:
-    """List all recorded transactions, optionally filtered by date range."""
+    """List all recorded transactions, optionally filtered by date or category."""
     ledger, _ = _get_ledger(data_file)
     transactions = ledger.all()
     if date_from is not None or date_to is not None:
         start = _parse_date(date_from, "from") if date_from else date.min
         end = _parse_date(date_to, "to") if date_to else date.max
         transactions = filter_by_date_range(transactions, start, end)
+    if filter_category is not None:
+        cat = Category(filter_category)
+        transactions = [t for t in transactions if t.category == cat]
     if not transactions:
         click.echo("No transactions found.")
         return
