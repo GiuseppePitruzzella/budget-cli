@@ -7,10 +7,26 @@ import click
 
 from src.budget.ledger import Ledger
 from src.budget.models import Category, Transaction, TransactionType
-from src.budget.reports import breakdown_by_category, generate_summary
+from src.budget.reports import (
+    breakdown_by_category,
+    filter_by_date_range,
+    generate_summary,
+)
 from src.budget.storage import JSONStorage
 
 DEFAULT_DATA_FILE = os.environ.get("BUDGET_DATA_FILE", "budget.json")
+
+
+def _parse_date(value: str, option_name: str) -> date:
+    """Parse a YYYY-MM-DD string, raising a user-friendly error on failure."""
+    try:
+        return date.fromisoformat(value)
+    except ValueError as exc:
+        raise click.BadParameter(
+            f"'{value}' is not a valid date. Expected format: YYYY-MM-DD.",
+            param_hint=f"'--{option_name}'",
+        ) from exc
+
 
 _CATEGORY_CHOICES = [c.value for c in Category]
 _TYPE_CHOICES = [t.value for t in TransactionType]
@@ -67,11 +83,29 @@ def add(
 
 
 @cli.command("list")
+@click.option(
+    "--from",
+    "date_from",
+    default=None,
+    help="Show transactions from this date (YYYY-MM-DD).",
+)
+@click.option(
+    "--to",
+    "date_to",
+    default=None,
+    help="Show transactions up to this date (YYYY-MM-DD).",
+)
 @click.option("--data-file", default=DEFAULT_DATA_FILE, hidden=True)
-def list_transactions(data_file: str) -> None:
-    """List all recorded transactions."""
+def list_transactions(
+    date_from: str | None, date_to: str | None, data_file: str
+) -> None:
+    """List all recorded transactions, optionally filtered by date range."""
     ledger, _ = _get_ledger(data_file)
     transactions = ledger.all()
+    if date_from is not None or date_to is not None:
+        start = _parse_date(date_from, "from") if date_from else date.min
+        end = _parse_date(date_to, "to") if date_to else date.max
+        transactions = filter_by_date_range(transactions, start, end)
     if not transactions:
         click.echo("No transactions found.")
         return
