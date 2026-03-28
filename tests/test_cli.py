@@ -137,3 +137,42 @@ class TestDeleteCommand:
     ) -> None:
         result = runner.invoke(cli, ["delete", "99", "--data-file", data_file])
         assert result.exit_code != 0
+
+
+class TestListDateFilter:
+    def test_list_with_from_date_shows_matching(
+        self, runner: CliRunner, data_file: str
+    ) -> None:
+        runner.invoke(cli, ["add", "10.0", "Recent expense", "--data-file", data_file])
+        result = runner.invoke(
+            cli, ["list", "--from", "2020-01-01", "--data-file", data_file]
+        )
+        assert result.exit_code == 0
+        assert "Recent expense" in result.output
+
+    def test_list_with_to_date_excludes_future(
+        self, runner: CliRunner, data_file: str
+    ) -> None:
+        runner.invoke(cli, ["add", "10.0", "Some expense", "--data-file", data_file])
+        result = runner.invoke(
+            cli, ["list", "--to", "1999-12-31", "--data-file", data_file]
+        )
+        assert "No transactions found" in result.output
+
+    def test_list_with_from_and_to_filters_correctly(
+        self, runner: CliRunner, data_file: str
+    ) -> None:
+        runner.invoke(cli, ["add", "10.0", "Expense today", "--data-file", data_file])
+        result = runner.invoke(
+            cli,
+            [
+                "list",
+                "--from",
+                "2020-01-01",
+                "--to",
+                "2099-12-31",
+                "--data-file",
+                data_file,
+            ],
+        )
+        assert "Expense today" in result.output
