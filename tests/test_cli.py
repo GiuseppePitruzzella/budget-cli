@@ -176,3 +176,21 @@ class TestListDateFilter:
             ],
         )
         assert "Expense today" in result.output
+
+    def test_invalid_from_date_shows_error(
+        self, runner: CliRunner, data_file: str
+    ) -> None:
+        result = runner.invoke(
+            cli, ["list", "--from", "25-11-2025", "--data-file", data_file]
+        )
+        assert result.exit_code != 0
+        assert "YYYY-MM-DD" in result.output
+
+    def test_invalid_to_date_shows_error(
+        self, runner: CliRunner, data_file: str
+    ) -> None:
+        result = runner.invoke(
+            cli, ["list", "--to", "not-a-date", "--data-file", data_file]
+        )
+        assert result.exit_code != 0
+        assert "YYYY-MM-DD" in result.output
