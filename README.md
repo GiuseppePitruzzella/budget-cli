@@ -1,6 +1,6 @@
 # BudgetCLI
 
-**BudgetCLI** is a command-line application written in Python to manage personal finances directly from the terminal. It allows you to record income and expenses, organize them by category, and generate summary reports — all stored locally in a JSON file with no external dependencies.
+**BudgetCLI** is a command-line application written in Python to manage personal finances directly from the terminal. It allows you to record income and expenses, organize them by category, and generate summary reports, all stored locally in a JSON file with no external dependencies.
 
 Built as a group project for the *Quality Development* seminar at UNICT (A.Y. 2025–2026).
 
@@ -77,7 +77,17 @@ python3 -m src.budget.cli add 1500.0 "Monthly salary" --type income --category s
 ### List all transactions
 
 ```bash
+# List all transactions
 python3 -m src.budget.cli list
+
+# Filter by date range
+python3 -m src.budget.cli list --from 2025-11-01 --to 2025-11-30
+
+# Filter by category
+python3 -m src.budget.cli list --category food
+
+# Combine filters
+python3 -m src.budget.cli list --category transport --from 2025-11-01
 ```
 
 Output example:
@@ -136,7 +146,7 @@ pytest --cov src tests/
 pytest tests/test_ledger.py -v
 ```
 
-The test suite covers **100% of the source code** across 67 tests.
+The test suite covers **100% of the source code** across 76 tests.
 
 ---
 
